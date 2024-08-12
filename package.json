@@ -1,8 +1,8 @@
 {
   "name": "react-use-anchor",
-  "version": "1.0.1",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "1.0.2",
+  "main": "dist/useAnchor.js",
+  "types": "dist/useAnchor.d.ts",
   "files": [
     "dist"
   ],
@@ -16,14 +16,13 @@
     "url": "git+https://github.com/yportfolio/react-use-anchor.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "npm run build"
   },
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": ">=16.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -28,15 +28,15 @@ const areArraysEqual = (
   );
 };
 
-type TUseIntersectionObserver = {
+type TUseAnchor = {
   heading?: "h1" | "h2" | "h3" | "h4" | "h5";
   options?: IntersectionObserverOptions;
 };
 
-export default function useIntersectionObserver({
+export default function useAnchor({
   heading = "h2",
   options,
-}: TUseIntersectionObserver): [RefObject<HTMLDivElement>, string[], string[]] {
+}: TUseAnchor): [RefObject<HTMLDivElement>, string[], string[]] {
   const [intersectingElements, setIntersectingElements] = useState<
     IntersectingElement[]
   >([]);
