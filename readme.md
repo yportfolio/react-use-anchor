@@ -17,22 +17,22 @@ import React from 'react';
 import useAnchor from 'use-anchor-hook';
 
 function MyComponent() {
-  const [containerRef, visibleIds, allIds] = useAnchor({ heading: 'h2' });
+  const [containerRef, visibleIds, headings] = useAnchor({ heading: 'h2' });
 
   return (
     <div>
       <nav>
-        {allIds.map(id => (
+        {headings.map(heading => (
           <a 
-            key={id} 
-            href={`#${id}`}
-            style={{ fontWeight: visibleIds.includes(id) ? 'bold' : 'normal' }}
+            key={heading.id} 
+            href={`#${heading.id}`}
+            style={{ fontWeight: visibleIds.includes(heading.id) ? 'bold' : 'normal' }}
           >
-            {id}
+            {heading.text}
           </a>
         ))}
       </nav>
-      
+
       <div ref={containerRef}>
         <h2 id="section1">Section 1</h2>
         <p>Content for section 1...</p>
@@ -53,13 +53,14 @@ The useAnchor hook accepts an options object and returns an array with three ele
 
 containerRef: A ref object to be attached to the container of your content.
 visibleIds: An array of IDs of the currently visible headings, sorted by their position in the viewport.
-allIds: An array of all heading IDs in the order they appear in the document.
+headings: An array of all heading IDs and text content in the order they appear in the document.
 
 #### Options
 
 The hook accepts the following options:
 
 **heading (optional)**: The heading tag to observe. Default is 'h2'. Can be 'h1', 'h2', 'h3', 'h4', or 'h5'.
+
 **options (optional)**: An object with Intersection Observer options:
 
 - root: The root element to use as the viewport. Default is the browser viewport.
@@ -78,11 +79,11 @@ The hook returns both the currently visible heading IDs and all heading IDs, all
 Ensure that all your observed heading elements have unique id attributes.
 Attach the containerRef to the parent element that contains all your headings.
 Use the visibleIds array to highlight the currently visible sections in your navigation.
-Use the allIds array to create a complete list of all sections.
+Use the headings array to create a complete list of all sections.
 
 ## Troubleshooting
 
-If you're not seeing any IDs in the visibleIds or allIds arrays:
+If you're not seeing any IDs in the visibleIds or headings arrays:
 
 Make sure your heading elements have id attributes.
 Check that you're using the correct heading type (e.g., 'h2' if that's what you specified in the options).

@@ -18,6 +18,11 @@ interface IntersectingElement {
   top: number;
 }
 
+interface HeadingInfo {
+  id: string;
+  text: string;
+}
+
 const areArraysEqual = (
   arr1: IntersectingElement[],
   arr2: IntersectingElement[]
@@ -36,14 +41,14 @@ type TUseAnchor = {
 export default function useAnchor({
   heading = "h2",
   options,
-}: TUseAnchor): [RefObject<HTMLDivElement>, string[], string[]] {
+}: TUseAnchor): [RefObject<HTMLDivElement>, string[], HeadingInfo[]] {
   const [intersectingElements, setIntersectingElements] = useState<
     IntersectingElement[]
   >([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const previousElementsRef = useRef<IntersectingElement[]>([]);
-  const idsRef = useRef<string[]>([]);
+  const idsRef = useRef<HeadingInfo[]>([]);
 
   const updateIntersectingElements = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -94,13 +99,16 @@ export default function useAnchor({
 
     const container = containerRef.current;
     if (container) {
-      const h2Elements = container.querySelectorAll(`${heading}[id]`);
-      if (h2Elements.length === 0) {
+      const headingElements = container.querySelectorAll(`${heading}[id]`);
+      if (headingElements.length === 0) {
         console.warn("No h2 elements with ids found in the container");
       }
-      h2Elements.forEach((el) => observerRef.current?.observe(el));
+      headingElements.forEach((el) => observerRef.current?.observe(el));
 
-      idsRef.current = Array.from(h2Elements).map((el) => el.id);
+      idsRef.current = Array.from(headingElements).map((el) => ({
+        id: el.id,
+        text: el.textContent || "",
+      }));
     }
 
     return () => {
