@@ -25,8 +25,12 @@ function MyComponent() {
         {headings.map(heading => (
           <a 
             key={heading.id} 
-            href={`#${heading.id}`}
-            style={{ fontWeight: visibleIds.includes(heading.id) ? 'bold' : 'normal' }}
+            href={`#${heading.id}`} 
+            /* Multiple sections may be visible in the viewport simultaneously.
+              The visibleIds array is ordered according to their position from top to bottom.
+              Therefore, visibleIds[0] will always represent the first section visible in the viewport.
+            */
+            style={{ fontWeight: visibleIds[0] ? 'bold' : 'normal' }}
           >
             {heading.text}
           </a>
