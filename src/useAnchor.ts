@@ -59,8 +59,10 @@ export default function useAnchor(
           }
         });
 
+        //TODO: the order of the elements may not be correct as the position of the old elements are not updated
         const newElements = [
           ...prev.filter(
+            // exclude elements that are invisible or already in the array in order to update their position
             (el) => !invisibleIds.includes(el.id) && !visibleIds.includes(el.id)
           ),
           ...visibleElements,
