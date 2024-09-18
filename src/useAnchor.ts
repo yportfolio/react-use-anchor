@@ -116,12 +116,12 @@ export default function useAnchor({
     };
   }, [options, updateIntersectingElements]);
 
-  const sortedIds = useMemo(
+  const visibleIds = useMemo(
     () => intersectingElements.map((el) => el.id).filter(Boolean),
     [intersectingElements]
   );
 
-  const allIds = useMemo(() => idsRef.current, [idsRef.current]);
+  const headings = useMemo(() => idsRef.current, [idsRef.current]);
 
-  return [containerRef, sortedIds, allIds];
+  return [containerRef, visibleIds, headings];
 }
