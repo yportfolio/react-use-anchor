@@ -1,6 +1,6 @@
 {
   "name": "react-use-anchor",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "main": "dist/useAnchor.js",
   "types": "dist/useAnchor.d.ts",
   "files": [
