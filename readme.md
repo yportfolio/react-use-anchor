@@ -59,6 +59,8 @@ export default function MyComponent() {
 }
 ```
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/stackblitz-starters-b8ora4?file=package.json)
+
 ## API
 
 ### useAnchor({options, heading}) 
