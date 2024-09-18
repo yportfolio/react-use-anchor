@@ -20,68 +20,53 @@ interface IntersectingElement {
 
 interface HeadingInfo {
   id: string;
-  text: string;
+  title: string;
 }
-
-const areArraysEqual = (
-  arr1: IntersectingElement[],
-  arr2: IntersectingElement[]
-) => {
-  if (arr1.length !== arr2.length) return false;
-  return arr1.every(
-    (el, index) => el.id === arr2[index].id && el.top === arr2[index].top
-  );
-};
 
 type TUseAnchor = {
   heading?: "h1" | "h2" | "h3" | "h4" | "h5";
   options?: IntersectionObserverOptions;
 };
 
-export default function useAnchor({
-  heading = "h2",
-  options,
-}: TUseAnchor): [RefObject<HTMLDivElement>, string[], HeadingInfo[]] {
+export default function useAnchor(
+  params: TUseAnchor = {}
+): [RefObject<HTMLDivElement>, string[], HeadingInfo[]] {
+  const { heading = "h2", options } = params;
+
   const [intersectingElements, setIntersectingElements] = useState<
     IntersectingElement[]
   >([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const previousElementsRef = useRef<IntersectingElement[]>([]);
   const idsRef = useRef<HeadingInfo[]>([]);
 
   const updateIntersectingElements = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       setIntersectingElements((prev) => {
-        const updatedElements = entries.reduce(
-          (acc, entry) => {
-            const id = entry.target.id;
-            const top = entry.boundingClientRect.top;
+        const visibleElements: IntersectingElement[] = [];
+        const visibleIds: string[] = [];
+        const invisibleIds: string[] = [];
 
-            if (entry.isIntersecting) {
-              const existingIndex = acc.findIndex((el) => el.id === id);
-              if (existingIndex !== -1) {
-                acc[existingIndex].top = top;
-              } else {
-                acc.push({ id, top });
-              }
-            } else {
-              return acc.filter((el) => el.id !== id);
-            }
-            return acc;
-          },
-          [...prev]
-        );
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleElements.push({
+              id: entry.target.id,
+              top: entry.boundingClientRect.top,
+            });
+            visibleIds.push(entry.target.id);
+          } else {
+            invisibleIds.push(entry.target.id);
+          }
+        });
 
-        updatedElements.sort((a, b) => a.top - b.top);
+        const newElements = [
+          ...prev.filter(
+            (el) => !invisibleIds.includes(el.id) && !visibleIds.includes(el.id)
+          ),
+          ...visibleElements,
+        ].sort((a, b) => a.top - b.top);
 
-        // Only update state if there's an actual change
-        if (!areArraysEqual(updatedElements, previousElementsRef.current)) {
-          previousElementsRef.current = updatedElements;
-          return updatedElements;
-        }
-
-        return prev;
+        return newElements;
       });
     },
     []
@@ -101,27 +86,27 @@ export default function useAnchor({
     if (container) {
       const headingElements = container.querySelectorAll(`${heading}[id]`);
       if (headingElements.length === 0) {
-        console.warn("No h2 elements with ids found in the container");
+        console.warn(`No ${heading} elements with ids found in the container`);
       }
       headingElements.forEach((el) => observerRef.current?.observe(el));
 
       idsRef.current = Array.from(headingElements).map((el) => ({
         id: el.id,
-        text: el.textContent || "",
+        title: el.textContent || "",
       }));
     }
 
     return () => {
       observerRef.current?.disconnect();
     };
-  }, [options, updateIntersectingElements]);
+  }, [heading, options, updateIntersectingElements]);
 
   const visibleIds = useMemo(
-    () => intersectingElements.map((el) => el.id).filter(Boolean),
+    () => intersectingElements.map((el) => el.id),
     [intersectingElements]
   );
 
-  const headings = useMemo(() => idsRef.current, [idsRef.current]);
+  const allAnchors = idsRef.current;
 
-  return [containerRef, visibleIds, headings];
+  return [containerRef, visibleIds, allAnchors];
 }

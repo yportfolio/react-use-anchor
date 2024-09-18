@@ -1,47 +1,57 @@
 # useAnchor
 
-`useAnchor` is a custom React hook that helps you create dynamic anchor links for headings in your content. It uses the Intersection Observer API to detect which headings are currently visible in the viewport, making it perfect for creating table of contents or navigation systems for long-form content.
+`useAnchor` is a custom React hook that creates dynamic anchor links for headings in your content. It leverages the Intersection Observer API to detect which headings are currently visible in the viewport, making it ideal for building table of contents or navigation systems for long-form content.
 
 ## Installation
 
 ```bash
-npm install use-anchor-hook@latest
+npm i react-use-anchor@latest
 ```
 
 ## Usage
 
 Here's a basic example of how to use the useAnchor hook:
 
-```javascript
-import React from 'react';
-import useAnchor from 'use-anchor-hook';
+```typescript
+"use client";
 
-function MyComponent() {
-  const [containerRef, visibleIds, headings] = useAnchor({ heading: 'h2' });
+import useAnchor from "react-use-anchor";
+
+export default function MyComponent() {
+  const [containerRef, visibleIds, allAnchors] = useAnchor();
 
   return (
-    <div>
-      <nav>
-        {headings.map(heading => (
-          <a 
-            key={heading.id} 
-            href={`#${heading.id}`} 
-            /* Multiple sections may be visible in the viewport simultaneously.
-              The visibleIds array is ordered according to their position from top to bottom.
-              Therefore, visibleIds[0] will always represent the first section visible in the viewport.
-            */
-            style={{ fontWeight: visibleIds[0] ? 'bold' : 'normal' }}
-          >
-            {heading.text}
-          </a>
-        ))}
-      </nav>
+    <div className="flex justify-evenly w-screen">
+      <div>
+        <nav className="sticky top-0 flex flex-col gap-4">
+          {allAnchors.map((heading) => (
+            <a
+              key={heading.id}
+              href={`#${heading.id}`}
+              /* Multiple sections may be visible in the viewport simultaneously.
+                The visibleIds array is ordered according to their position from top to bottom.
+                Therefore, visibleIds[0] will always represent the first section visible in the viewport.
+              */
+              className={`${
+                visibleIds[0] === heading.id ? "text-red-500" : "text-white"
+              }`}
+            >
+              {heading.title}
+            </a>
+          ))}
+        </nav>
+      </div>
 
-      <div ref={containerRef}>
+      <div ref={containerRef} className="flex flex-col gap-4 space-y-96">
         <h2 id="section1">Section 1</h2>
         <p>Content for section 1...</p>
         <h2 id="section2">Section 2</h2>
         <p>Content for section 2...</p>
+
+        <h2 id="section3">Section 3</h2>
+        <p>Content for section 3...</p>
+        <h2 id="section4">Section 4</h2>
+        <p>Content for section 4...</p>
         {/* More sections... */}
       </div>
     </div>
@@ -51,17 +61,31 @@ function MyComponent() {
 
 ## API
 
-### useAnchor(options)
+### useAnchor({options, heading}) 
 
-The useAnchor hook accepts an options object and returns an array with three elements:
+
+The useAnchor hook accepts an IntersectionObserverOptions and a heading tag and returns an array with three elements:
 
 containerRef: A ref object to be attached to the container of your content.
 visibleIds: An array of IDs of the currently visible headings, sorted by their position in the viewport.
-headings: An array of all heading IDs and text content in the order they appear in the document.
+allAnchors: An array of all heading IDs and text content in the order they appear in the document.
 
 #### Options
 
-The hook accepts the following options:
+The hook accepts the following parameters:
+
+```typescript
+type TUseAnchor = {
+  heading?: "h1" | "h2" | "h3" | "h4" | "h5";
+  options?: IntersectionObserverOptions;
+};
+
+interface IntersectionObserverOptions {
+  root?: Element | null;
+  rootMargin?: string;
+  threshold?: number | number[];
+}
+```
 
 **heading (optional)**: The heading tag to observe. Default is 'h2'. Can be 'h1', 'h2', 'h3', 'h4', or 'h5'.
 
@@ -83,11 +107,11 @@ The hook returns both the currently visible heading IDs and all heading IDs, all
 Ensure that all your observed heading elements have unique id attributes.
 Attach the containerRef to the parent element that contains all your headings.
 Use the visibleIds array to highlight the currently visible sections in your navigation.
-Use the headings array to create a complete list of all sections.
+Use the allAnchors array to create a complete list of all sections.
 
 ## Troubleshooting
 
-If you're not seeing any IDs in the visibleIds or headings arrays:
+If you're not seeing any IDs in the visibleIds or allAnchors arrays:
 
 Make sure your heading elements have id attributes.
 Check that you're using the correct heading type (e.g., 'h2' if that's what you specified in the options).
