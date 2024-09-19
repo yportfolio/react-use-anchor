@@ -19,6 +19,8 @@ npm i react-use-anchor@latest
 ## Usage
 
 Here's a basic example of how to use the useAnchor hook:
+[Open in StackBlitz](https://stackblitz.com/edit/stackblitz-starters-b8ora4?file=package.json)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/stackblitz-starters-b8ora4?file=package.json)
 
 ```typescript
 "use client";
@@ -67,7 +69,6 @@ export default function MyComponent() {
 }
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/stackblitz-starters-b8ora4?file=package.json)
 
 ## API
 
